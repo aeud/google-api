@@ -1,11 +1,10 @@
 <!doctype html>
-<html ng-app>
+<html ng-app="google">
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<title>Google API</title>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-		<link href="./css/font-awesome.css" rel="stylesheet">
 		<link href="./css/main.css" rel="stylesheet">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<!--[if lt IE 9]>
@@ -13,11 +12,27 @@
 		<![endif]-->
 	</head>
 	<body>
-    	<div class="container">
+    	<div class="container" ng-controller="MainController">
 			<h1>Hello world</h1>
+			<a class="btn btn-default" href="https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=130102489011-ls4h5v0jg9il4hppjnv5no4ekmskl1g0.apps.googleusercontent.com&redirect_uri=http://google-api.github.io/oauth2callback&scope=https://www.googleapis.com/auth/calendar">Get token</a>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script>
+		angular.module('google', [])
+		.controller('MainController', function($scope) {
+			var hash = window.location.hash.substr(1);
+			hash = hash.split('&')
+			for (var i = 0; i < hash.length; i++) {
+				hash[i] = hash[i].split('=');
+			}
+			var data = {};
+			for (var i = 0; i < hash.length; i++) {
+				data[hash[i][0]] = hash[i][1];
+			}
+			console.log(data)
+		})
+		</script>
 	</body>
 </html>
