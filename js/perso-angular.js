@@ -35,13 +35,30 @@ angular.module('google', [])
 				'Authorization': 'Bearer '+params.access_token
 			}
 		}).success(function(data){
-			$scope.events = data.items;
-			console.log(data);
-			test()
+			var events = data.items;
+			$scope.events = events;
+			var days = {};
+			var start = new Date('2014-01-01');
+			var end = new Date('2015-01-01');
+			while (start < end) {
+				days[start.toISOString().slice(0,10)] = 0;
+				start.setDate(start.getDate()+1)
+			}
+			console.log(days)
+			for (var i = 0; i < events.length; i++) {
+				var d = events[i];
+				var start = d.start.date ? new Date(d.start.date) : new Date(d.start.dateTime);
+				var end = d.end.date ? new Date(d.end.date) : new Date(d.end.dateTime);
+				while (start <= end) {
+					days[start.toISOString().slice(0,10)] = days[start.toISOString().slice(0,10)] + 1; 
+					start.setDate(start.getDate()+1);
+				}
+			}
+			test(days)
 		})
 	}
 	
-	function test() {
+	function test(data) {
 		var width = 960,
 		    height = 136,
 		    cellSize = 17; // cell size
@@ -52,7 +69,7 @@ angular.module('google', [])
 		    format = d3.time.format("%Y-%m-%d");
 
 		var color = d3.scale.quantize()
-		    .domain([-.05, .05])
+		    .domain([-5, 5])
 		    .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
 
 		var svg = d3.select("#test").selectAll("svg")
@@ -88,17 +105,10 @@ angular.module('google', [])
 		    .attr("class", "month")
 		    .attr("d", monthPath);
 
-		d3.csv("dji.csv", function(error, csv) {
-		  var data = d3.nest()
-		    .key(function(d) { return d.Date; })
-		    .rollup(function(d) { return (d[0].Close - d[0].Open) / d[0].Open; })
-		    .map(csv);
-
-		  rect.filter(function(d) { return d in data; })
-		      .attr("class", function(d) { return "day " + color(data[d]); })
-		    .select("title")
-		      .text(function(d) { return d + ": " + percent(data[d]); });
-		});
+  		  rect.filter(function(d) { return d in data; })
+  		      .attr("class", function(d) { return "day " + color(data[d]); })
+  		    .select("title")
+  		      .text(function(d) { return d + ": " + percent(data[d]); });
 
 		function monthPath(t0) {
 		  var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
