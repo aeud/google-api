@@ -14,24 +14,79 @@
 	<body>
     	<div class="container" ng-controller="MainController">
 			<h1>Hello world</h1>
-			<a class="btn btn-default" href="https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=130102489011-ls4h5v0jg9il4hppjnv5no4ekmskl1g0.apps.googleusercontent.com&redirect_uri=http://google-api.github.io/oauth2callback&scope=https://www.googleapis.com/auth/calendar">Get token</a>
+			<p>Access Token: {{ accessToken }}</p>
+			<a class="btn btn-default" href="https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=130102489011-ls4h5v0jg9il4hppjnv5no4ekmskl1g0.apps.googleusercontent.com&redirect_uri=http://google-api.github.io&scope=https://www.googleapis.com/auth/calendar">Get token</a>
+			<div class="row">
+				<div class="col-sm-3">
+					<div ng-if="calendars">
+						<ul class="nav nav-pills nav-stacked">
+							<li class="{{ selectedCalendar && calendar.id == selectedCalendar.id ? 'active' : '' }}" ng-repeat="calendar in calendars"><a ng-click="selectCalendar(calendar)">{{ calendar.summary }}</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-sm-9">
+					<div class="events" ng-if="events">
+						<ul>
+							<li ng-repeat="event in events">
+								<div class="event">
+									<div>
+										{{ event.start.date ? event.start.date : event.start.dateTime }} - 
+										{{ event.end.date ? event.end.date : event.end.dateTime }} : 
+										{{ event.summary }}
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script>
 		angular.module('google', [])
-		.controller('MainController', function($scope) {
-			var hash = window.location.hash.substr(1);
-			hash = hash.split('&')
-			for (var i = 0; i < hash.length; i++) {
-				hash[i] = hash[i].split('=');
+		.controller('MainController', function($scope, $http) {
+			$scope.selectedCalendar = null;
+			$scope.accessToken = null;
+			$scope.events;
+			var params = {}, queryString = location.hash.substring(1),
+			    regex = /([^&=]+)=([^&]*)/g, m;
+			while (m = regex.exec(queryString)) {
+			  params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
 			}
-			var data = {};
-			for (var i = 0; i < hash.length; i++) {
-				data[hash[i][0]] = hash[i][1];
+			console.log(params);
+			if (params.access_token) {
+				$scope.accessToken = params.access_token;
+				$http({
+					'url': 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+					'headers': {
+						'Authorization': 'Bearer '+params.access_token
+					}
+				}).success(function(data){
+					console.log(data);
+					$scope.calendars = data.items;
+				})
 			}
-			console.log(data)
+			$scope.selectCalendar = function(calendar){
+				$scope.selectedCalendar = calendar;
+				$http({
+					'url': 'https://www.googleapis.com/calendar/v3/calendars/'+calendar.id+'/events',
+					'params': {
+						'timeMin': new Date('2014-01-01').toISOString(),
+						'timeMax': new Date('2015-01-01').toISOString(),
+						'orderBy': 'startTime',
+						'singleEvents': true
+					},
+					'headers': {
+						'Authorization': 'Bearer '+params.access_token
+					}
+				}).success(function(data){
+					$scope.events = data.items;
+					console.log(data);
+				})
+			}
 		})
 		</script>
 	</body>
