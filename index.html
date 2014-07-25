@@ -1,93 +1,30 @@
-<!doctype html>
-<html ng-app="google">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="chrome=1">
-		<title>Google API</title>
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-		<link href="./css/main.css" rel="stylesheet">
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<!--[if lt IE 9]>
-		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-    	<div class="container" ng-controller="MainController">
-			<h1>Hello world</h1>
-			<p>Access Token: {{ accessToken }}</p>
-			<a class="btn btn-default" href="https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=130102489011-ls4h5v0jg9il4hppjnv5no4ekmskl1g0.apps.googleusercontent.com&redirect_uri=http://aeud.github.io/google-api&scope=https://www.googleapis.com/auth/calendar">Get token</a>
-			<div class="row">
-				<div class="col-sm-3">
-					<div ng-if="calendars">
-						<ul class="nav nav-pills nav-stacked">
-							<li class="{{ selectedCalendar && calendar.id == selectedCalendar.id ? 'active' : '' }}" ng-repeat="calendar in calendars"><a ng-click="selectCalendar(calendar)">{{ calendar.summary }}</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-sm-9">
-					<div class="events" ng-if="events">
-						<ul>
-							<li ng-repeat="event in events">
-								<div class="event">
-									<div>
-										{{ event.start.date ? event.start.date : event.start.dateTime }} - 
-										{{ event.end.date ? event.end.date : event.end.dateTime }} : 
-										{{ event.summary }}
-									</div>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			
-		</div>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-		<script>
-		angular.module('google', [])
-		.controller('MainController', function($scope, $http) {
-			$scope.selectedCalendar = null;
-			$scope.accessToken = null;
-			$scope.events;
-			var params = {}, queryString = location.hash.substring(1),
-			    regex = /([^&=]+)=([^&]*)/g, m;
-			while (m = regex.exec(queryString)) {
-			  params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-			}
-			console.log(params);
-			if (params.access_token) {
-				$scope.accessToken = params.access_token;
-				$http({
-					'url': 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
-					'headers': {
-						'Authorization': 'Bearer '+params.access_token
-					}
-				}).success(function(data){
-					console.log(data);
-					$scope.calendars = data.items;
-				})
-			}
-			$scope.selectCalendar = function(calendar){
-				$scope.selectedCalendar = calendar;
-				$http({
-					'url': 'https://www.googleapis.com/calendar/v3/calendars/'+calendar.id+'/events',
-					'params': {
-						'timeMin': new Date('2014-01-01').toISOString(),
-						'timeMax': new Date('2015-01-01').toISOString(),
-						'orderBy': 'startTime',
-						'singleEvents': true
-					},
-					'headers': {
-						'Authorization': 'Bearer '+params.access_token
-					}
-				}).success(function(data){
-					$scope.events = data.items;
-					console.log(data);
-				})
-			}
-		})
-		</script>
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Google API</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1265.21">
+  <style type="text/css">
+    p.p2 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #0000ee}
+    li.li4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times}
+    span.s1 {text-decoration: underline}
+    span.Apple-tab-span {white-space:pre}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<h1 style="margin: 0.0px 0.0px 16.1px 0.0px; font: 24.0px Times"><b>Hello worldsq<span class="Apple-tab-span">	</span>q<span class="Apple-tab-span">	</span>sq<span class="Apple-tab-span">	</span>sq<span class="Apple-tab-span">	</span>s<span class="Apple-tab-span">	</span>qs<span class="Apple-tab-span">	</span>s<span class="Apple-tab-span">	</span></b></h1>
+<p class="p2">Access Token: {{ accessToken }}</p>
+<p class="p3"><span class="s1"><a href="https://accounts.google.com/o/oauth2/auth?response_type=token&client_id=130102489011-ls4h5v0jg9il4hppjnv5no4ekmskl1g0.apps.googleusercontent.com&redirect_uri=http://aeud.github.io/google-api&scope=https://www.googleapis.com/auth/calendar">Get token</a></span></p>
+<ul class="ul1">
+  <li class="li4">{{ calendar.summary }}</li>
+</ul>
+<ul class="ul1">
+  <li class="li4">{{ event.start.date ? event.start.date : event.start.dateTime }} - {{ event.end.date ? event.end.date : event.end.dateTime }} : {{ event.summary }} ssq<span class="Apple-tab-span">	</span>s<br>
+</li>
+</ul>
+</body>
 </html>
