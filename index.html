@@ -25,6 +25,9 @@
 					</div>
 				</div>
 				<div class="col-sm-9">
+					<div id="test">
+						
+					</div>
 					<div class="events" ng-if="events">
 						<ul>
 							<li ng-repeat="event in events">
@@ -45,49 +48,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-		<script>
-		angular.module('google', [])
-		.controller('MainController', function($scope, $http) {
-			$scope.selectedCalendar = null;
-			$scope.accessToken = null;
-			$scope.events;
-			var params = {}, queryString = location.hash.substring(1),
-			    regex = /([^&=]+)=([^&]*)/g, m;
-			while (m = regex.exec(queryString)) {
-			  params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-			}
-			console.log(params);
-			if (params.access_token) {
-				$scope.accessToken = params.access_token;
-				$http({
-					'url': 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
-					'headers': {
-						'Authorization': 'Bearer '+params.access_token
-					}
-				}).success(function(data){
-					console.log(data);
-					$scope.calendars = data.items;
-				})
-			}
-			$scope.selectCalendar = function(calendar){
-				$scope.selectedCalendar = calendar;
-				$http({
-					'url': 'https://www.googleapis.com/calendar/v3/calendars/'+calendar.id+'/events',
-					'params': {
-						'timeMin': new Date('2014-01-01').toISOString(),
-						'timeMax': new Date('2015-01-01').toISOString(),
-						'orderBy': 'startTime',
-						'singleEvents': true
-					},
-					'headers': {
-						'Authorization': 'Bearer '+params.access_token
-					}
-				}).success(function(data){
-					$scope.events = data.items;
-					console.log(data);
-				})
-			}
-		})
-		</script>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="./js/perso-angular.js"></script>
+		<script src="./js/perso-d3.js"></script>
 	</body>
 </html>
