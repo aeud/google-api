@@ -71,14 +71,14 @@ angular.module('google', [])
 		var color = d3.scale.quantize()
 		    .domain([-5, 5])
 		    .range(d3.range(11).map(function(d) { return "q" + d + "-11"; }));
-
+		d3.select("#test").selectAll("svg").remove()
 		var svg = d3.select("#test").selectAll("svg")
 		    .data(d3.range(2014, 2015))
-		  .enter().append("svg")
+			.enter().append("svg")
 		    .attr("width", width)
 		    .attr("height", height)
 		    .attr("class", "RdYlGn")
-		  .append("g")
+			.append("g")
 		    .attr("transform", "translate(" + ((width - cellSize * 53) / 2) + "," + (height - cellSize * 7 - 1) + ")");
 
 		svg.append("text")
@@ -88,7 +88,7 @@ angular.module('google', [])
 
 		var rect = svg.selectAll(".day")
 		    .data(function(d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
-		  .enter().append("rect")
+			.enter().append("rect")
 		    .attr("class", "day")
 		    .attr("width", cellSize)
 		    .attr("height", cellSize)
